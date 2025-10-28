@@ -1,0 +1,17 @@
+{
+  "name": "pgats-avaliacao-teste-e2e",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "open": "npx cypress open",
+    "test": "npx cypress run"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@faker-js/faker": "^10.1.0",
+    "cypress": "^15.5.0",
+    "cypress-mochawesome-reporter": "^4.0.2"
+  }
+}

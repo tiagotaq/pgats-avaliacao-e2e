@@ -1,0 +1,29 @@
+on:
+  workflow_dispatch:
+
+jobs:
+  e2e-tests:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonando repositório
+        uses: actions/checkout@v4
+
+      - name: Verificando versão do Node
+        run: node --version
+
+      - name: Instalando dependências
+        run: npm install
+
+      - name: Executando os testes
+        run: npx cypress run
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: Upload dos relatórios
+          path: |
+            cypress/reports
+            cypress/screenshots
+            cypress/videos
