@@ -1,3 +1,0 @@
-describe('Testes de Checkout', () => {
-    A implementar...
-});

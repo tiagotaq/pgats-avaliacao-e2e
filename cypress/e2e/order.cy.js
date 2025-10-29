@@ -1,0 +1,52 @@
+import Login from '../pages/Login.js';
+import SignUp from '../pages/SignUp.js';
+import AccountCreated from '../pages/AccountCreated.js';
+import Menu from '../pages/Menu.js';
+import Products from '../pages/Products.js';
+import Cart from '../pages/Cart.js';
+import Checkout from '../pages/Checkout.js';
+import Payment from '../pages/Payment.js';
+import PaymentDone from '../pages/PaymentDone.js';
+import { gerarDadosDeUsuarioDinamicos } from '../utils/funcoes.js';
+
+describe('Testes de Pedidos', () => {
+    it('Cadastrar novo usuário antes de realizar um pedido', () => {
+        cy.visit('/login');
+        const usuarioDinamico = gerarDadosDeUsuarioDinamicos();
+        Login.acessarFormularioDeSignUp(usuarioDinamico.fisrtName, usuarioDinamico.email);
+        SignUp.cadastrarUsuario(usuarioDinamico);
+        AccountCreated.tituloContaCriada().should('have.text', 'Account Created!');
+        AccountCreated.botaoContinue().click();
+        Menu.logout().should('be.visible');
+        Menu.products().click();
+        Products.titulo().should('have.text', 'All Products');
+        Products.botaoAddToCartProduct1().click();
+        Cart.linkViewCart().click();
+        Cart.dadosProduto1().contains('Blue Top');
+        Cart.botaoProceedToCheckout().click();
+        Checkout.dadosYourDeliveryAddress().contains(usuarioDinamico.fisrtName);
+        Checkout.dadosYourDeliveryAddress().contains(usuarioDinamico.address);
+        Checkout.dadosYourDeliveryAddress().contains('Sidney AD 123456');
+        Checkout.dadosYourDeliveryAddress().contains('Australia');
+        Checkout.dadosYourDeliveryAddress().contains('98765432');
+        Checkout.dadosYourBillingAddress().contains(usuarioDinamico.fisrtName);
+        Checkout.dadosYourBillingAddress().contains(usuarioDinamico.address);
+        Checkout.dadosYourBillingAddress().contains('Sidney AD 123456');
+        Checkout.dadosYourBillingAddress().contains('Australia');
+        Checkout.dadosYourBillingAddress().contains('98765432');
+        Checkout.dadosProduto1().contains('Blue Top');
+        Checkout.precoProduto1().should('contain', 'Rs. 500');
+        Checkout.quantidadeProduto1().should('contain', '1');
+        Checkout.totalProduto1().should('contain', 'Rs. 500');
+        Checkout.totalCarrinho().should('contain', 'Rs. 500');
+        Checkout.campoComentario().type('Mensagem pedido');
+        Checkout.botaoPlaceOrder().click();
+        Payment.campoNameOnCard().type('NAME ON CARD');
+        Payment.campoCardNumber().type('4444555566662222');
+        Payment.campoCvc().type('789');
+        Payment.campoExpirationMonth().type('12');
+        Payment.campoExpirationYear().type('2099');
+        Payment.botaoPayAndConfirmOrder().click();
+        PaymentDone.tituloOrderPlaced().should('have.text', 'Order Placed!');
+    })
+});
